@@ -7,7 +7,6 @@ from plot import plot_summary
 import pandas as pd
 
 df = pd.read_csv('./data/AAPL.csv')
-df = df.sort_values('Date')
 
 # The algorithms require a vectorized environment to run
 env = TradingWrapper(StockTradingEnv(df, gamma=0.95))
@@ -16,9 +15,9 @@ model = PPO("MlpPolicy", env, verbose=1)
 model.learn(total_timesteps=200000)
 model.save("./data/model")
 
-env.mode = "eval"
 history = []
 done = False
+env.mode = "eval"
 obs = env.reset()
 res = env.render()
 while not done:

@@ -1,0 +1,6 @@
+numpy
+pandas
+matplotlib
+gym
+stable_baselines3
+pytest

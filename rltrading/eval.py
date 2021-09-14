@@ -4,25 +4,24 @@ from stable_baselines3.common.vec_env.dummy_vec_env import DummyVecEnv
 from env import StockTradingEnv
 from wrapper import TradingWrapper
 from plot import plot_summary
+import numpy as np
 import pandas as pd
 
 df = pd.read_csv('./data/AAPL.csv')
 
 # The algorithms require a vectorized environment to run
-env = TradingWrapper(StockTradingEnv(df, gamma=0.95))
+env = TradingWrapper(StockTradingEnv(df, gamma=0.95), mode="eval")
 env = DummyVecEnv([lambda: env])
-model = PPO("MlpPolicy", env, verbose=1)
-model.learn(total_timesteps=200000)
-model.save("./data/model")
+model = PPO.load("./data/model", env=env)
 
 history = []
 done = False
-env.mode = "eval"
 obs = env.reset()
 res = env.render()
 while not done:
-    action, _states = model.predict(obs)
-    res.update({"action": StockTradingEnv.actions_str[action[0]]})
+    action, _states = model.predict(obs, deterministic=True)
+    action_type = (action[0, 0]*3-1e-6).astype(np.int32)
+    res.update({"action": StockTradingEnv.actions_str[action_type]})
     history.append(res)
     obs, rewards, done, info = env.step(action)
     res = env.render()

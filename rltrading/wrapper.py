@@ -8,11 +8,11 @@ class TradingWrapper(gym.Wrapper):
   """
   :param env: (gym.Env) Gym environment that will be wrapped
   """
-  def __init__(self, env:gym.Env, seed:int=0):
+  def __init__(self, env:gym.Env, seed:int=0, mode:str="train"):
     # Call the parent constructor, so we can access self.env later
     super().__init__(env)
     self.rng = np.random.default_rng(seed)
-    self.mode = "train"
+    self.mode = mode
   
   def reset(self) -> np.ndarray:
     """
